@@ -1,0 +1,730 @@
+{% extends "base.html" %}
+
+<title>{% block title %}Submit Report{% endblock %}</title>
+{% block body %}
+<style>
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-content {
+        text-align: center;
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        max-width: 80%;
+    }
+
+    /* Close button style */
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover {
+        color: black;
+    }
+</style>
+
+<div>
+    <h3 style="text-align: center;" class="py-3">Metered & Aquifer Report</h3>
+
+    <div class="table-responsive ">
+
+
+        <table class="table table-bordered table-condensed" cellpadding="0" cellspacing="0">
+
+            <tbody>
+
+                <tr id="m_a_0">
+
+                    <td class="bg-dark text-white text-center"
+                        style="line-height:20px;  vertical-align: middle; font-size: 13px;">Image</td>
+
+                    <td class="bg-dark text-white text-center"
+                        style="line-height:20px;  vertical-align: middle; font-size: 13px;">View Image</td>
+
+
+                    <td class="bg-dark text-white text-center"
+                        style="line-height:20px;  vertical-align: middle; font-size: 13px;">Ward No</td>
+
+                    <td class="bg-dark text-white text-center"
+                        style="line-height:20px;  vertical-align: middle; font-size: 13px;">Visited Area</td>
+
+                    <td class="bg-dark text-white text-center"
+                        style="line-height:20px;  vertical-align: middle; font-size: 13px;">Account No</td>
+
+                    <td class="bg-dark text-white text-center"
+                        style="line-height:20px;  vertical-align: middle; font-size: 13px;">Consumer Name or Cell
+                    </td>
+
+
+                    <td class="bg-dark text-white text-center"
+                        style="line-height:20px;  vertical-align: middle; font-size: 13px;">Type</td>
+
+
+                    <td class="bg-dark text-white text-center"
+                        style="line-height:20px;  vertical-align: middle; font-size: 13px;">Connection</td>
+
+                    <td class="bg-dark text-white text-center"
+                        style="line-height:20px;  vertical-align: middle; font-size: 13px;">Bill Amount</td>
+
+                    <td class="bg-dark text-white text-center" style="line-height:10px;  vertical-align: middle; font-size: 13px;
+          ">Paid</td>
+
+                    <td class="bg-dark text-white text-center"
+                        style="line-height:20px;  vertical-align: middle; font-size: 13px;">Remaining Arears</td>
+
+
+                    <td class="bg-dark text-white text-center"
+                        style="line-height:20px;  vertical-align: middle; font-size: 13px;">Monthly Demand</td>
+
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+    <div class="border border-3 border-success rounded-bottom " style="
+    margin-left: auto;
+    margin-right: auto;
+    text-align:center; margin-top:2%; ">
+        <h3 class="text-center text-warning text-wrap " style="margin-top:1%;">No of Payees <b id="no_paid">0</b>
+        </h3>
+        <h3 class="text-center text-info text-wrap" style="margin-bottom:1%;">Totals Recovery <b id="totals_paid">0</b>
+        </h3>
+
+    </div>
+
+
+
+    <h3 style="text-align: center;" class="py-3">Disconnections Report</h3>
+
+    <div class="table-responsive ">
+        <table class="table table-bordered table-condensed " cellpadding="0" cellspacing="0">
+            <tbody>
+
+                <tr id="d_0" class="info">
+                    <td class="bg-dark text-white text-center"
+                        style="line-height:20px;  vertical-align: middle; font-size: 13px;">Ward No</td>
+
+                    <td class="bg-dark text-white text-center"
+                        style="line-height:20px;  vertical-align: middle; font-size: 13px;">Type</td>
+
+                    <td class="bg-dark text-white text-center"
+                        style="line-height:20px;  vertical-align: middle; font-size: 13px;">Account No</td>
+
+                    <td class="bg-dark text-white text-center"
+                        style="line-height:20px;  vertical-align: middle; font-size: 13px;">Arrears</td>
+
+                    <td class="bg-dark text-white text-center"
+                        style="line-height:20px;  vertical-align: middle; font-size: 13px;">Connection</td>
+
+                    <td class="bg-dark text-white text-center"
+                        style="line-height:20px;  vertical-align: middle; font-size: 13px;">Property No</td>
+
+                    <td class="bg-dark text-white text-center"
+                        style="line-height:20px;  vertical-align: middle; font-size: 13px;">Fir No</td>
+
+
+
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="border border-3 border-danger rounded-bottom " style="
+    margin-left: auto;
+    margin-right: auto;
+    text-align:center; margin-top:2%; ">
+        <h3 class="text-center text-warning text-wrap " style="margin-top:1%;">Totals Dissconnections <b
+                id="total_no_diss">0</b></h3>
+        <h3 class="text-center text-info text-wrap" style="margin-bottom:1%;">Totals Arrears <b
+                id="total_arrears_diss">0</b></h3>
+
+    </div>
+
+
+
+
+
+    <div class="col-md-12 text-center my-4">
+        <button type"Submit" class="btn btn-success" onclick="check();" id="btn">Submit</button>
+        <!-- <button type="button" onclick="addrow();" class="btn btn-secondary">Add Column</button> -->
+    </div>
+
+
+</div>
+
+</div>
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img id="modalImage" style="max-width: 100%; max-height: 80%;">
+    </div>
+</div>
+
+</body>
+<script>
+
+    var now = new Date();
+    d = now.getDate();
+    m = now.getMonth(); m++;
+    y = now.getFullYear();
+    count = 0;
+
+
+
+    function ward_no_validate() {
+        lst = [];
+
+        var next_id = document.getElementById("m_a_0").nextSibling;
+
+        while (next_id) {
+            if (next_id.id === undefined) { break; }
+
+            value = next_id.childNodes[2].innerText;
+            lst.push(value);
+            next_id = next_id.nextSibling;
+        }
+
+
+
+        var next_id = document.getElementById("d_0").nextSibling;
+        while (next_id) {
+            if (next_id.id === undefined) { break; }
+
+            value = next_id.childNodes[0].innerText;
+            lst.push(value);
+            next_id = next_id.nextSibling;
+        }
+
+
+        lst.sort();
+        uniques = Array.from(new Set(lst));
+
+        if (uniques.length > 1) {
+            btn_lock()
+
+            temp = "m_a_0"
+            root = document.getElementById(temp).nextSibling;
+
+            while (root.id) {
+
+
+
+                root.childNodes[2].setAttribute("class", "bg-dark text-warning")
+
+                root.childNodes[2].innerHTML += " <br>All Wards must be Same !";
+
+
+                root = document.getElementById(root.id).nextSibling;
+            }
+
+            temp = "d_0"
+            root = document.getElementById(temp).nextSibling;
+
+            while (root.id) {
+
+                root.childNodes[0].setAttribute("class", "bg-dark text-warning")
+
+                root.childNodes[0].innerHTML += " <br>All Wards must be Same !";
+
+
+                root = document.getElementById(root.id).nextSibling;
+            }
+
+
+            return true;
+
+
+
+        }
+        return false;
+
+    }
+
+    document.getElementById("total_no_diss").innerHTML = sessionStorage.getItem("total_no_diss");
+    document.getElementById("total_arrears_diss").innerHTML = sessionStorage.getItem("total_arrears_diss");
+
+    document.getElementById("no_paid").innerHTML = sessionStorage.getItem("no_paid");
+    document.getElementById("totals_paid").innerHTML = sessionStorage.getItem("totals_paid");
+
+    var table = '<th scope="col" id="notimg" style="text-align: center; background-color:#89898f; padding-top: 3.5rem;" ><input id="file" type="file" style="margin: auto auto auto auto;border-radius: 10px 10px 10px 10px;text-align: center; display:none;" onchange="imagefunc($(this));" accept="image/*"></th><th style="text-align: center; background-color:#89898f;"><img src="" alt="" id="notview" >&nbsp;<button type="button" class="btn btn-outline-dark btn-sm" id="vbtn" style="display:none;" onclick="openModal($(this))">View Image</button></th><th scope="col" id="ward_no" style="text-align: center; background-color:#89898f;"></th><th scope="col" id="visted_arears" style="text-align: center; background-color:#89898f;"></th><th scope="col" id="account_no" style="text-align: center; background-color:#89898f;"></th><th scope="col" id="consumer_name" style="text-align: center; background-color:#89898f;"></th><th scope="col" id="type" style="text-align: center; background-color:#89898f;"></th><th scope="col" id="con" style="text-align: center; background-color:#89898f;"></th><th scope="col" id="bill_ammount" style="text-align: center; background-color:#89898f;"></th><th scope="col" id="paid" style="text-align: center; background-color:#89898f;"></th><th scope="col" id="arrears" style="text-align: center; background-color:#89898f;"></th><th scope="col" id="monthly_demand" style="text-align: center; background-color:#89898f;"></th></tr>'
+
+
+    var dis_table = '<th scope="col" id="ward_no" style="text-align: center; background-color:#89898f; "></th><th scope="col" id="type" style="text-align: center; background-color:#89898f;"></th><th scope="col" id="account_no" style="text-align: center; background-color:#89898f;"></th><th scope="col" id="arrears" style="text-align: center; background-color:#89898f;"></th><th scope="col" id="con" style="text-align: center; background-color:#89898f;"></th><th scope="col" id="property_no" style="text-align: center; background-color:#89898f;" ></th><th scope="col" id="fir_no" style="text-align: center; background-color:#89898f;"></th</tr>'
+
+
+    const modal = document.getElementById('myModal');
+    const modalImage = document.getElementById('modalImage');
+
+    function openModal(src) {
+        src = document.getElementById(src.closest('tr')[0].id).children[1].firstChild.src
+
+        modal.style.display = 'block';
+        modalImage.src = src;
+    }
+
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+
+    function imagefunc(ev) {
+        cls_id = ev.closest('tr')[0].id
+
+        document.getElementById(cls_id).firstChild.setAttribute("class", "")
+        btn = document.getElementById('btn');
+        btn.setAttribute("class", "btn btn-success text-white");
+
+        btn.innerHTML = "Submit"
+        btn.disabled = false;
+
+        file = document.getElementById(cls_id).firstChild.firstChild.files[0]
+
+        imgsrc = document.getElementById(cls_id).childNodes[1].firstChild
+
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+                base64String = event.target.result;
+                imgsrc.src = base64String;
+
+                data = JSON.parse(localStorage.getItem(cls_id))
+                data.img = base64String
+
+                localStorage.setItem(cls_id, JSON.stringify(data));
+
+                imgsrc.style = "max-width: 100px;max-height: 100px;"
+                btn = document.getElementById(cls_id).children[1].children[1];
+
+                btn.style = "pading:0px; margin-top:10%;"
+
+            };
+
+            reader.readAsDataURL(file);
+
+            // Create a FileList with the updated file
+
+
+
+        }
+
+
+
+    }
+
+    function btn_lock() {
+        btn = document.getElementById('btn');
+        btn.setAttribute("class", "btn btn-danger text-white");
+
+        btn.innerHTML = "Submit Button are locked <br>first Input the valid Field"
+        btn.disabled = true;
+    }
+
+
+
+    function check_validations(k, v) {
+
+        //  ward_no is integer ?
+        if (v.id === "ward_no" || v.id === "account_no" || v.id === "bill_ammount" || v.id === "paid" || v.id === "monthly_demand") {
+            if (isNaN(Number(v.innerHTML))) {
+                count += 1;
+                //v.innerHTML += " <br>(Only Numbers are Allowed)"
+                v.setAttribute("class", "bg-dark text-warning")
+                //v.setAttribute("style", "background:#c45025; text-align: center; ");
+                btn_lock();
+            }
+
+
+
+        }
+    }
+
+    count = 0;
+    function check() {
+
+
+        flage = true
+
+
+        v = Object.values(document.getElementsByTagName("tr"));
+        i = 0;
+        while (i < v.length) {
+
+            if (v[i].id != 'm_a_0' && v[i].id != 'd_0') {
+
+                val = v[i].getElementsByTagName("*")
+                x = Object.values(val);
+
+                Object.keys(x).forEach(key => {
+
+                    if (x[key].innerText == "") {
+
+
+                        if (x[key].id != "image" && x[key].id != "file" && x[key].id != "notimg" && x[key].id != "notview" && x[key].id != "viewimg") {
+
+                            x[key].setAttribute("class", "bg-dark text-warning")
+                            x[key].innerHTML = "Input Missing";
+                            btn_lock();
+                            count += 1;
+
+                        }
+
+                        else {
+                            if (x[key].id == "image") {
+
+                                if (x[key].firstChild.files.length === 0) {
+                                    x[key].setAttribute("class", "bg-dark text-warning")
+
+                                    '<input id="file" type="file" style="margin: auto auto auto auto;word-wrap: anywhere;border-radius: 10px 10px 10px 10px;text-align: center; display:flex;">Upload a picture'
+                                    //x[key].innerHTML += "Select Image";
+                                    btn_lock();
+                                    count += 1;
+                                }
+
+                            }
+
+                        }
+
+
+                    }
+
+                    else if (x[key].innerText != "") {
+                        check_validations(v[i], x[key]);
+                    }
+
+
+
+
+                });
+            }
+
+
+
+            i += 1;
+        }
+
+
+        if (count == 0) {
+
+            /*if (ward_no_validate('m_a_0')) {
+                btn_lock();
+ 
+            }*/
+
+            if (ward_no_validate()) {
+                btn_lock();
+            }
+
+
+
+            else {
+
+
+                merge = {}
+
+
+
+                send_data = localStorage
+                Object.keys(send_data).forEach(key => {
+                    merge[key] = JSON.parse(send_data[key])
+
+                })
+
+
+
+                function downloadObjectAsJson(exportObj, exportName) {
+                    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+                    var downloadAnchorNode = document.createElement('a');
+                    downloadAnchorNode.setAttribute("href", dataStr);
+                    downloadAnchorNode.setAttribute("download", exportName + ".json");
+                    document.body.appendChild(downloadAnchorNode); // required for firefox
+
+                    downloadAnchorNode.click();
+                    downloadAnchorNode.remove();
+                }
+
+                k1 = Object.keys(merge)[0]
+
+                file_name = String(merge[k1]["ward_no"]) + "__" + d + "_" + m + "_" + y;
+
+                compress_data(merge, file_name)
+
+                //console.log(merge);
+                //downloadObjectAsJson(merge, file_name);
+                sessionStorage.removeItem("ASP.NET_SessionId");
+                // downloadObjectAsJson(merge, merge[k1]["ward_no"]);
+
+            }
+        }
+
+
+
+    }
+
+    function tr_checker() {
+
+        total_id = [];
+        tr = document.getElementsByTagName("tr");
+        i = 0;
+
+        while (i < tr.length) {
+
+            sp = tr[i].id.split("_");
+
+            if (sp[0] == 'm' && sp[1] == 'a') {
+                id_ = sp.slice(-1)[0];
+                total_id.push(id_)
+            }
+            i += 1;
+        }
+
+        total_id.sort();
+        return next_row = total_id.slice(-1)[0];
+
+
+    }
+
+
+    function addrow(k, code, condition) {
+
+
+        t = document.getElementsByTagName("tr");
+        kk = Object.values(t);
+        srt = [];
+        i = 0;
+        while (i < kk.length) {
+
+            if (kk[i].id.split('_')[0] == condition) {
+                srt.push(kk[i].id); i += 1
+            };
+
+            i += 1;
+
+        }
+
+        document.getElementById(srt.slice(-1)[0]).insertAdjacentHTML("afterend", code);
+        delete srt;
+
+    }
+
+    function compress_data(response, name) {
+        console.log("sdfds")
+
+        fetch('/compress', {
+            method: 'POST',
+            body: JSON.stringify(response),
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.blob();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(blob => {
+
+                // Create a URL for the blob
+                const blobURL = URL.createObjectURL(blob);
+
+                // Create a link to trigger the download (optional)
+                const link = document.createElement('a');
+                link.href = blobURL;
+                link.download = name + '.tar.xz'; // Specify the desired file name
+                link.style.display = 'none';
+
+                // Add the link to the DOM and trigger the download (optional)
+                document.body.appendChild(link);
+                link.click();
+
+                // Clean up the link (optional)
+                URL.revokeObjectURL(blobURL);
+
+                // Read the data as text
+                return blob.text();
+            })
+            .then(data => {
+                // Log the data to the console
+                //console.log('Received data:', data);
+
+                // Use the data as needed
+                // Example: You can display it on the webpage or perform further processing.
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+
+    }
+
+    function check_defaulters(request_data) {
+
+        fetch('/defaulters', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify(request_data)
+        })
+            .then(response => response.json())
+            .then(data => {
+
+
+                Object.keys(data).forEach(key => {
+
+                    //console.log(document.getElementById(key))
+                    document.getElementById(key).firstChild.firstChild.style.display = "flex"
+                    document.getElementById(key).firstChild.id = "image"
+                    document.getElementById(key).querySelector("#notview").id = "viewimg"
+                    //merge[key] = JSON.parse(send_data[key])
+
+                })
+
+                loadsrc();
+
+
+
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+    function loadsrc() {
+
+        Object.keys(session).forEach(key => {
+
+            if (key.split("_")[0] == "m" && key.split("_")[1] == "a") {
+                img = JSON.parse(localStorage.getItem(key)).img;
+                if (img) {
+                    tag = document.getElementById(key).children[1].firstChild
+                    tag.src = img;
+                    tag.style = "max-width: 100px;max-height: 100px;"
+                    btn = document.getElementById(key).children[1].children[1];
+                    btn.style = "pading:0px; margin-top:10%;"
+
+                    dataTransfer = new DataTransfer();
+                    blob = new Blob(['This is fake data.'], { type: 'text/plain' });
+                    fakeFile = new File([blob], '....', { type: 'text/plain' });
+                    dataTransfer.items.add(fakeFile);
+
+                    document.getElementById(key).children[0].firstChild.files = dataTransfer.files;
+
+                    //tag.files = dataTransfer.files;
+                }
+            }
+        });
+
+    }
+
+
+    function meter_aqf() {
+
+        get_data = {};
+        accounts_arr = {};
+
+        session = localStorage;
+
+        Object.keys(session).forEach(key => {
+
+            if (key.split("_")[0] == "m" && key.split("_")[1] == "a") {
+
+                get_data[key] = JSON.parse(session[key])
+
+                accounts_arr[key] = parseInt(get_data[key].account_no, 10);
+
+
+
+            }
+        });
+
+
+
+        // fill data
+        check_defaulters(accounts_arr);
+
+
+        Object.keys(get_data).forEach(key => {
+            addrow(key, '<tr class="table-secondary"  id="' + key + '">' + table, "m");
+
+            document.getElementById(key).getElementsByTagName("*").ward_no.innerHTML = get_data[key]["ward_no"];
+            document.getElementById(key).getElementsByTagName("*").visted_arears.innerHTML = get_data[key]["visted_arears"];
+            document.getElementById(key).getElementsByTagName("*").account_no.innerHTML = get_data[key]["account_no"];
+            document.getElementById(key).getElementsByTagName("*").consumer_name.innerHTML = get_data[key]["consumer_name"];
+            document.getElementById(key).getElementsByTagName("*").type.innerHTML = get_data[key]["type"];
+            document.getElementById(key).getElementsByTagName("*").con.innerHTML = get_data[key]["con"];
+            total_bill = get_data[key]["bill_ammount"];
+            paid = get_data[key]["paid"];
+            document.getElementById(key).getElementsByTagName("*").bill_ammount.innerHTML = total_bill;
+            document.getElementById(key).getElementsByTagName("*").paid.innerHTML = paid
+            document.getElementById(key).getElementsByTagName("*").arrears.innerHTML = total_bill - paid;
+
+
+            document.getElementById(key).getElementsByTagName("*").monthly_demand.innerHTML = get_data[key]["monthly_demand"];
+
+
+
+
+        });
+
+
+    }
+
+
+    function disconnect() {
+
+        get_data = {};
+        dsession = localStorage
+
+        Object.keys(dsession).forEach(key => {
+
+            if (key.split("_")[0] == "d") {
+                get_data[key] = JSON.parse(dsession[key])
+            }
+        });
+
+        // fill data
+
+        Object.keys(get_data).forEach(key => {
+            addrow(key, '<tr class="table-secondary" id="' + key + '">' + dis_table, "d");
+
+            document.getElementById(key).getElementsByTagName("*").ward_no.innerHTML = get_data[key]["ward_no"];
+            document.getElementById(key).getElementsByTagName("*").type.innerHTML = get_data[key]["type"];
+            document.getElementById(key).getElementsByTagName("*").account_no.innerHTML = get_data[key]["account_no"];
+            document.getElementById(key).getElementsByTagName("*").arrears.innerHTML = get_data[key]["arrears"];
+            document.getElementById(key).getElementsByTagName("*").con.innerHTML = get_data[key]["con"];
+            document.getElementById(key).getElementsByTagName("*").property_no.innerHTML = get_data[key]["property_no"];
+            document.getElementById(key).getElementsByTagName("*").fir_no.innerHTML = get_data[key]["fir_no"];
+
+        });
+
+
+    }
+
+
+
+
+
+    meter_aqf();
+    delete srt
+
+
+    disconnect();
+
+
+
+</script> {% endblock %}

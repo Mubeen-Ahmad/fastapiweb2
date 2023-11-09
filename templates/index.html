@@ -1,0 +1,460 @@
+{% extends "base.html" %}
+
+<title>{% block title %}Water & Aquifers{% endblock %}</title>
+
+
+{% block body %}
+
+<div class="alert alert-danger bg-dark text-warning alert-dismissible fade show m-3 text-center d-none" role="alert"
+    id="myAlert">
+    <strong id="msg">Alert</strong>
+    <button class="btn-close" type="button" onclick="hideAlert();"></button>
+</div>
+
+
+<div>
+
+    <form onsubmit="send();">
+
+        <div class="form-group">
+
+            <div class="table-responsive ">
+
+                <table class="table table-bordered table-condensed" cellpadding="0" cellspacing="0">
+
+                    <tbody>
+
+                        <tr id="m_a_0">
+                            <td class="bg-dark text-white text-center"
+                                style="line-height:20px;  vertical-align: middle; font-size: 13px;">Get Info</td>
+
+                            <td class="bg-dark text-white text-center"
+                                style="line-height:20px;  vertical-align: middle; font-size: 13px;">Account No</td>
+
+                            <td class="bg-dark text-white text-center"
+                                style="line-height:10px;  vertical-align: middle; font-size: 13px;">Paid</td>
+
+                            <td class="bg-dark text-white text-center"
+                                style="line-height:20px;  vertical-align: middle; font-size: 13px;">Bill Amount</td>
+
+                            <td class="bg-dark text-white text-center"
+                                style="line-height:20px;  vertical-align: middle; font-size: 13px;">Monthly Demand
+                            </td>
+
+
+                            <td class="bg-dark text-white text-center"
+                                style="line-height:20px;  vertical-align: middle; font-size: 13px;">Ward No</td>
+
+                            <td class="bg-dark text-white text-center"
+                                style="line-height:20px;  vertical-align: middle; font-size: 13px;">Visited Area
+                            </td>
+
+                            <td class="bg-dark text-white text-center"
+                                style="line-height:20px;  vertical-align: middle; font-size: 13px;">Consumer Name or
+                                Cell </td>
+
+
+                            <td class="bg-dark text-white text-center"
+                                style="line-height:20px;  vertical-align: middle; font-size: 13px;">Type</td>
+
+
+                            <td class="bg-dark text-white text-center"
+                                style="line-height:20px;  vertical-align: middle; font-size: 13px;">Connection</td>
+
+
+                            <td class="bg-dark text-white text-center"
+                                style="line-height:10px;  vertical-align: middle; font-size: 13px;">Actions</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+
+</body>
+
+
+<div class="border border-3 border-success rounded-bottom " style="
+    margin-left: auto;
+    margin-right: auto;
+    text-align:center; margin-top:2%; ">
+    <h3 class="text-center text-warning text-wrap " style="margin-top:1%;">No of Payees <b id="no_paid">0</b>
+    </h3>
+    <h3 class="text-center text-info text-wrap" style="margin-bottom:1%;">Totals Recovery <b id="totals_paid">0</b></h3>
+
+</div>
+
+
+<div class="col-md-12 text-center my-4">
+    <!-- <button type"button" class="btn btn-success"  required >Submit</button> -->
+    <button type="button" onclick="addrow();" class="btn btn-secondary">Add Column</button>
+
+    <script>
+
+
+        function showAlert(msg) {
+            var alertElement = document.getElementById('myAlert');
+            alertElement.classList.remove('d-none'); // Remove the 'd-none' class to show the alert
+            document.getElementById("msg").innerText = msg;
+        }
+
+        function hideAlert() {
+            var alertElement = document.getElementById('myAlert');
+            alertElement.classList.add('d-none');
+        }
+        function tr_checker() {
+
+            total_id = [];
+            tr = document.getElementsByTagName("tr");
+            i = 0;
+
+            while (i < tr.length) {
+
+                sp = tr[i].id.split("_");
+
+                if (sp[0] == 'm' && sp[1] == 'a') {
+                    id_ = sp.slice(-1)[0];
+                    total_id.push(parseInt(id_))
+                }
+                i += 1;
+            }
+
+            total_id.sort((a, b) => a - b).join(', ')
+            return next_row = total_id.slice(-1)[0];
+
+
+        }
+        window.onload = (event) => {
+            store_session();
+            trackInput();
+
+        };
+
+        function send() {
+
+            get_data = {};
+            session = localStorage
+
+
+            Object.keys(session).forEach(key => {
+
+                if (key.split("_")[0] == "m" && key.split("_")[1] == "a") {
+                    get_data[key] = JSON.parse(session[key])
+                }
+            });
+
+            //session_keys.sort();
+            function downloadObjectAsJson(exportObj, exportName) {
+                var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+                var downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", exportName + ".json");
+                document.body.appendChild(downloadAnchorNode); // required for firefox
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+            }
+            k1 = Object.keys(get_data)[0]
+            downloadObjectAsJson(get_data, get_data[k1]["ward_no"]);
+        }
+
+        var html_row = "'><td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px;'><button type='button' class='form-control delete btn btn-warning text-dark' style='border-radius:50px 50px 50px 50px;' onClick='get_account_no($(this));'>Fill Info</button></td>    <td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px;'><input id='account_no' type='tel' class='form-control bg-white text-center text-dark' style='width:160px;'  name='account_no' pattern='[0-9]+' title='Only Numbers Allow' required autocomplete='off'  oninput='save($(this).closest(\"tr\")[0].id,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").account_no.name,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").account_no.value);' ></td><td class='bg-dark text-white text-center'  style='line-height:20px;  vertical-align: middle; font-size: 13px;'><input id='paid' type='tel' class='form-control bg-white text-center text-dark' style='width:150px;' pattern='[0-9]+' title='Only Numbers Allow' required name='paid' autocomplete='off' oninput='save($(this).closest(\"tr\")[0].id,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").paid.name,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").paid.value); trackInput();' /></td> <td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px;'><input style='width:130px;' id='bill_ammount' type='tel' class='form-control bg-white text-center text-dark'  pattern='[0-9]+' title='Only Numbers Allow' required name='bill_ammount' autocomplete='off' oninput='save($(this).closest(\"tr\")[0].id,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").bill_ammount.name,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").bill_ammount.value);' /></td><td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px;'><input id='monthly_demand' type='tel' class='form-control bg-white text-center text-dark' style='width:100px;' pattern='[0-9]+' title='Only Numbers Allow' required name='monthly_demand' autocomplete='off' oninput='save($(this).closest(\"tr\")[0].id,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").monthly_demand.name,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").monthly_demand.value);' /></td><td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px;'><input id='ward_no' type='tel' class='form-control bg-white text-center text-dark'  style='width:80px;'  name='ward_no'  title='Ward No'  pattern='[0-9]+' required autocomplete='off'  oninput='save($(this).closest(\"tr\")[0].id,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").ward_no.name,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").ward_no.value);' ></td><td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px;'><input  id='visted_arears' type='text' class='form-control bg-white text-center text-dark'  style='width:150px;' name='visted_arears'  title='Visted Area' required autocomplete='off'  oninput='save($(this).closest(\"tr\")[0].id,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").visted_arears.name,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").visted_arears.value);' ></td><td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px;'><input style='width:150px;'  id='consumer_name' type='text' class='form-control bg-white text-center text-dark'  name='consumer_name'  title='Consumer Name' required autocomplete='off'  oninput='save($(this).closest(\"tr\")[0].id,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").consumer_name.name,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").consumer_name.value);' ></td><td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px;'><select style='width:100px;' name='type' oninput='save($(this).closest(\"tr\")[0].id,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").type.name,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").type.value);' required class='form-control bg-white text-center text-dark' id='type'><option value='' selected disabled hidden >Choose here</option><option  value='Aquifer'>Aquifer</option><option value='water_sewer'>Water & Sewer</option></select></td><td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px;'><select oninput='save($(this).closest(\"tr\")[0].id,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").con.name,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").con.value);' id='con' style='width:120px;' name='con' required class='form-control bg-white text-center text-dark' ><option value='' selected disabled hidden >Choose here</option><option  value='domestic'>Domestic</option><option value='commercial'>Commercial</option></select></td><td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px;'><button type='button' class='form-control delete btn btn-danger' onClick='remove($(this));');'>Delete</button></td></tr>";
+
+        function addrow() {
+            id_ = parseInt(tr_checker());
+            id_ += 1;
+
+            var rows = "<tr id='" + 'm_a_' + id_ + html_row;
+            document.getElementById(("m_a_" + (id_ - 1))).insertAdjacentHTML("afterend", rows);
+
+            var attr = {
+
+                ward_no: "",
+                visted_arears: "",
+                account_no: "",
+                consumer_name: "",
+                type: "",
+                con: "",
+                bill_ammount: "",
+                paid: "",
+                monthly_demand: ""
+            }
+
+            localStorage.setItem('m_a_' + id_, JSON.stringify(attr));
+
+        }
+
+        function remove(tr) {
+
+            remove_id = tr.closest("tr").attr("id");
+
+            localStorage.removeItem(remove_id);
+            tr.closest("tr").remove();
+            trackInput();
+        }
+
+        function save(id, k, v) {
+
+            //data[id] = data[id] || {};
+            //data[id][k] = v;
+
+            var temp = JSON.parse(localStorage.getItem(id));
+            temp[k] = v;
+            localStorage.setItem(id, JSON.stringify(temp));
+
+
+
+            //current_id = x.closest('tr')[0].id 
+            //console.log(x.closest('tr')[0].getElementsByTagName("*").ward_no.value);
+        }
+
+
+        function store_session() {
+
+            session = localStorage
+            session_data = {};
+            session_keys = [];
+
+
+            Object.keys(session).forEach(key => {
+
+                if (key.split("_")[0] == "m" && key.split("_")[1] == "a") {
+                    session_data[key] = JSON.parse(session[key])
+                    session_keys.push(key.split("_").slice(-1)[0]);
+
+                }
+            });
+            //session_keys.sort();
+            session_keys.sort((a, b) => a - b).join(', ')
+            Object.keys(session_keys).forEach(load_key => {
+
+                add = "<tr id='" + 'm_a_' + session_keys[load_key] + html_row;
+                document.getElementById('m_a_' + tr_checker()).insertAdjacentHTML("afterend", add);
+
+                load_data = localStorage.getItem('m_a_' + session_keys[load_key]);
+                get = JSON.parse(load_data);
+
+                browser_data = document.getElementById('m_a_' + session_keys[load_key]).getElementsByTagName("*");
+
+                browser_data.ward_no.value = get.ward_no;
+                browser_data.visted_arears.value = get.visted_arears;
+                browser_data.account_no.value = get.account_no;
+                browser_data.consumer_name.value = get.consumer_name;
+                browser_data.type.value = get.type;
+                browser_data.con.value = get.con;
+                browser_data.bill_ammount.value = get.bill_ammount;
+                browser_data.paid.value = get.paid;
+                browser_data.monthly_demand.value = get.monthly_demand;
+
+            });
+        }
+
+        function isNumeric(str) { return /^\d+$/.test(str); }
+
+        function counts_values() {
+            var count = 0;
+            var no_count = 0;
+
+            var id = "m_a_0";
+            var next_id = document.getElementById(id).nextSibling;
+
+
+            while (next_id) {
+
+                if (next_id.id === undefined) { break; }
+
+                value = next_id.childNodes[3].firstChild.value;
+
+                if (isNumeric(value)) {
+                    count += parseInt(value);
+                    no_count += 1;
+                }
+
+
+                next_id = next_id.nextSibling;
+            }
+            return [no_count, count];
+        }
+
+
+        function trackInput() {
+
+
+            document.getElementById("no_paid").innerHTML = counts_values()[0];
+            document.getElementById("totals_paid", document.getElementById("no_paid")).innerHTML = counts_values()[1];
+
+            sessionStorage.setItem("no_paid", document.getElementById("no_paid").innerHTML)
+            sessionStorage.setItem("totals_paid", document.getElementById("totals_paid").innerHTML)
+        }
+
+        function clean_value(id) {
+            var element = document.getElementById(id);
+            var children = element.children;
+
+            for (var i = 1; i < children.length - 1; i++) {
+                children[i].firstChild.value = "";
+
+                localStorage.setItem(id, JSON.stringify(
+                    {
+                        ward_no: "",
+                        visted_arears: "",
+                        account_no: "",
+                        consumer_name: "",
+                        type: "",
+                        con: "",
+                        bill_ammount: "",
+                        paid: "",
+                        monthly_demand: "",
+
+                    }))
+            }
+
+        }
+
+        function input_color(id, classes) {
+
+            var cls = document.getElementById(id).cells;
+            var len = cls.length;
+            for (i = 1; i < len - 1; i++) {
+                cls[i].children[0].className = classes;
+            }
+
+        }
+
+        function get_account_no(tr) {
+
+
+
+            var id = tr.closest("tr").attr("id");
+            input_color(id, "form-control bg-dark text-dark border-dark");
+
+            var account_no = document.getElementById(id).querySelector("#account_no").value
+
+            if (account_no === "") {
+
+                showAlert("Enter the account Number");
+                //clean_value(id);
+                input_color(id, "form-control bg-white text-center text-dark");
+
+                setTimeout(function () {
+                    hideAlert();
+                }, 2000);
+
+
+            }
+
+            else if (isNumeric(account_no) == false) {
+                showAlert("Only Digits are allowd");
+                //clean_value(id);
+
+                input_color(id, "form-control bg-white text-center text-dark");
+                setTimeout(function () {
+                    hideAlert();
+                }, 2000);
+            }
+
+
+
+            else if (isNumeric(account_no)) {
+
+                var asp = sessionStorage.getItem('ASP.NET_SessionId');
+
+                if (asp == undefined) {
+
+                    request_data = { account_no: account_no, "ASP.NET_SessionId": false }
+                }
+
+                else {
+                    request_data = { account_no: account_no, "ASP.NET_SessionId": asp }
+
+                }
+
+
+                fetch('/process_data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(request_data)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+
+
+                        // return 
+                        if (data.session) {
+                            sessionStorage.setItem("ASP.NET_SessionId", data.session["ASP.NET_SessionId"]);
+                        }
+
+                        if (data.status.code === "success") {
+                            received = data[account_no];
+                            ward_no = received.ward_no;
+                            visted_arears = received.visted_arears;
+                            consumer_name = received.consumer_name;
+                            type = received.type;
+                            con = received.con;
+                            bill_ammount = received.bill_ammount;
+                            monthly_demand = received.monthly_demand;
+
+
+                            document.getElementById(id).querySelector("#ward_no").value = ward_no;
+                            document.getElementById(id).querySelector("#visted_arears").value = visted_arears;
+                            document.getElementById(id).querySelector("#consumer_name").value = consumer_name;
+                            document.getElementById(id).querySelector("#type").value = type;
+                            document.getElementById(id).querySelector("#con").value = con;
+                            document.getElementById(id).querySelector("#bill_ammount").value = bill_ammount;
+                            document.getElementById(id).querySelector("#monthly_demand").value = monthly_demand;
+
+                            localStorage.setItem(id, JSON.stringify(
+                                {
+                                    ward_no: received.ward_no,
+                                    visted_arears: received.visted_arears,
+                                    account_no: account_no,
+                                    consumer_name: received.consumer_name,
+                                    type: received.type,
+                                    con: received.con,
+                                    bill_ammount: received.bill_ammount,
+                                    paid: JSON.parse(localStorage.getItem(id))["paid"],
+                                    monthly_demand: received.monthly_demand,
+
+                                }))
+
+                            input_color(id, "form-control bg-white text-center text-dark");
+
+                            showAlert("Data Generated Sucessfully");
+                            setTimeout(function () {
+                                hideAlert();
+                            }, 3000);
+
+
+                        }
+                        else if (data.status.code === "error") {
+                            input_color(id, "form-control bg-white text-center text-dark");
+
+                            showAlert("Data Not Found Enter the Record Manually");
+                            setTimeout(function () {
+                                hideAlert();
+                            }, 3000);
+
+                        }
+
+
+
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+
+
+
+            }
+
+        }
+
+
+    </script>
+    {% endblock %}

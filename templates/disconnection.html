@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+
+<title>{% block title %}Disconnection{% endblock %}</title>
+
+{% block body %}
+<div class="alert alert-danger bg-dark text-warning alert-dismissible fade show m-3 text-center d-none" role="alert"
+    id="myAlert">
+    <strong id="msg">Alert</strong>
+    <button class="btn-close" type="button" onclick="hideAlert();"></button>
+</div>
+
+<div>
+    <form>
+
+        <div class="form-group">
+            <div class="table-responsive">
+                <table class="table table-bordered table-condensed " cellpadding="0" cellspacing="0">
+
+                    <tbody>
+
+                        <tr id="d_0">
+                            <td class="bg-dark text-white text-center"
+                                style="line-height:20px;  vertical-align: middle; font-size: 13px;">Get Data</td>
+
+                            <td class="bg-dark text-white text-center"
+                                style="line-height:20px;  vertical-align: middle; font-size: 13px;">Account No</td>
+
+
+                            <td class="bg-dark text-white text-center my-   "
+                                style="line-height:20px;  vertical-align: middle; font-size: 13px;">Ward No</td>
+
+                            <td class="bg-dark text-white text-center "
+                                style="line-height:20px;  vertical-align: middle; font-size: 13px;">Type</td>
+
+
+                            <td class="bg-dark text-white text-center"
+                                style="line-height:20px;  vertical-align: middle; font-size: 13px;">Connection</td>
+
+                            <td class="bg-dark text-white text-center"
+                                style="line-height:20px;  vertical-align: middle; font-size: 13px;">Arrears Amount
+                            </td>
+
+                            <td class="bg-dark text-white text-center"
+                                style="line-height:20px;  vertical-align: middle; font-size: 13px;">Property No
+                            </td>
+
+                            <td class="bg-dark text-white text-center"
+                                style="line-height:20px;  vertical-align: middle; font-size: 13px;">FIR NO
+                            </td>
+
+                            <td class="bg-dark text-white text-center"
+                                style="line-height:10px;  vertical-align: middle;font-size: 13px;">Actions</td>
+                        </tr>
+                        <!--  Add here rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="border border-3 border-danger rounded-bottom " style="
+    margin-left: auto;
+    margin-right: auto;
+    text-align:center; margin-top:2%; ">
+    <h3 class="text-center text-warning text-wrap " style="margin-top:1%;">Totals Dissconnections <b
+            id="total_no_diss">0</b></h3>
+    <h3 class="text-center text-info text-wrap" style="margin-bottom:1%;">Totals Arrears <b
+            id="total_arrears_diss">0</b></h3>
+
+</div>
+
+<div class="col-md-12 text-center my-4">
+    <!-- <button type"button" class="btn btn-success"  required >Submit</button> -->
+    <button type="button" onclick="addrow();" class="btn btn-secondary">Add Column</button>
+
+    <script>
+        window.onload = (event) => {
+            store_session();
+            trackInput();
+        };
+
+
+        function showAlert(msg) {
+            var alertElement = document.getElementById('myAlert');
+            alertElement.classList.remove('d-none'); // Remove the 'd-none' class to show the alert
+            document.getElementById("msg").innerText = msg;
+        }
+
+        function hideAlert() {
+            var alertElement = document.getElementById('myAlert');
+            alertElement.classList.add('d-none');
+
+
+        }
+
+
+        html_row = "<td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px;'><button type='button' class='form-control delete btn btn-warning text-dark' style='border-radius:50px 50px 50px 50px;' onClick='get_account_no($(this));'>Fill Info</button></td><td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px;'><input id='account_no' type='tel' class='form-control bg-white text-center text-dark' style='width:120px; margin-left:auto; margin-right:auto;' name='account_no' title='Only Numbers Allow' required pattern='[0-9]+' autocomplete='off' oninput='save($(this).closest(\"tr\")[0].id,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").account_no.name,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").account_no.value);' ></td><td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px;'><input id='ward_no' type='tel' class='form-control bg-white text-center text-dark' style='width:120px; margin-left:auto; margin-right:auto;' name='ward_no' title='Only Numbers Allow' pattern='[0-9]+' required autocomplete='off' oninput='save($(this).closest(\"tr\")[0].id,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").ward_no.name,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").ward_no.value);' ></td><td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px;'><select style='width:120px; margin-left:auto; margin-right:auto;' name='type' oninput='save($(this).closest(\"tr\")[0].id,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").type.name,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").type.value);' required class='form-control bg-white text-center text-dark' id='type'><option value='' selected disabled hidden >Choose here</option><option value='illegal'>Illegal</option><option value='defaulter'>Defaulter</option></select></td><td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px;'><select oninput='save($(this).closest(\"tr\")[0].id,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").con.name,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").con.value);' id='con' name='con' required class='form-control bg-white text-center text-dark' style='width:120px; margin-left:auto; margin-right:auto;' ><option value='' selected disabled hidden >Choose here</option><option value='domestic'>Domestic</option><option value='commercial'>Commercial</option></select></td><td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px;' ><input id='arrears' type='tel' class='form-control bg-white text-center text-dark' pattern='[0-9]+' title='Only Numbers Allow' required name='arrears' autocomplete='off' oninput='save($(this).closest(\"tr\")[0].id,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").arrears.name,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").arrears.value); onchange=trackInput();' style='width:150px; margin-left:auto; margin-right:auto;' /></td><td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px;'><input id='property_no' type='text' class='form-control bg-white text-center text-dark' style='width:120px; margin-left:auto; margin-right:auto;' name='property_no' autocomplete='off' oninput='save($(this).closest(\"tr\")[0].id,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").property_no.name,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").property_no.value);' /></td><td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px; '><input id='fir_no' type='text' class='form-control bg-white text-center text-dark' style='margin-left: auto;margin-right: auto;width: 120px; margin-left:auto; margin-right:auto;' pattern='[0-9]+' title='Only Numbers Allow' required name='fir_no' autocomplete='off' oninput='save($(this).closest(\"tr\")[0].id,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").fir_no.name,$(this).closest(\"tr\")[0].getElementsByTagName(\"*\").fir_no.value);' /></td><td class='bg-dark text-white text-center' style='line-height:20px;  vertical-align: middle; font-size: 13px;'><button type='button' class='form-control delete btn btn-danger' onClick='remove($(this));');'>Delete</button></td></tr > ";
+
+
+
+
+
+        function tr_checker() {
+
+            total_id = [];
+            tr = document.getElementsByTagName("tr");
+            i = 0;
+
+            while (i < tr.length) {
+                sp = tr[i].id.split("_");
+
+                if (sp[0] == 'd') {
+                    id_ = sp.slice(-1)[0];
+                    total_id.push(id_)
+                }
+                i += 1;
+            }
+
+            total_id.sort();
+
+            return next_row = total_id.slice(-1)[0];
+
+
+        }
+
+        function addrow() {
+            id_ = parseInt(tr_checker());
+            id_ += 1;
+            var rows = "<tr id='" + 'd_' + id_ + "'>" + html_row;
+
+            document.getElementById(("d_" + (id_ - 1))).insertAdjacentHTML("afterend", rows);
+
+            var attr = {
+                ward_no: "",
+                type: "",
+                account_no: "",
+                con: "",
+                arrears: "",
+                property_no: "",
+                fir_no: "",
+            }
+
+            localStorage.setItem('d_' + id_, JSON.stringify(attr));
+
+        }
+
+        function remove(tr) {
+
+            remove_id = tr.closest("tr").attr("id");
+
+            localStorage.removeItem(remove_id);
+            tr.closest("tr").remove();
+            trackInput();
+        }
+
+        function save(id, k, v) {
+
+            //data[id] = data[id] || {};
+            //data[id][k] = v;
+
+            var temp = JSON.parse(localStorage.getItem(id));
+            temp[k] = v;
+            localStorage.setItem(id, JSON.stringify(temp));
+            trackInput();
+
+
+
+            //current_id = x.closest('tr')[0].id 
+            //console.log(x.closest('tr')[0].getElementsByTagName("*").ward_no.value);
+        }
+
+
+        function store_session() {
+
+            session = localStorage
+            session_data = {};
+            session_keys = [];
+
+
+            Object.keys(session).forEach(key => {
+
+                if (key.split("_")[0] == "d") {
+                    session_data[key] = JSON.parse(session[key])
+                    session_keys.push(key.split("_").slice(-1)[0]);
+                }
+            });
+
+            session_keys.sort();
+
+            Object.keys(session_keys).forEach(load_key => {
+
+                add = "<tr id='" + 'd_' + session_keys[load_key] + "' class='py-1' >" + html_row;
+                document.getElementById('d_' + tr_checker()).insertAdjacentHTML("afterend", add);
+
+                load_data = localStorage.getItem('d_' + session_keys[load_key]);
+                get = JSON.parse(load_data);
+
+                browser_data = document.getElementById('d_' + session_keys[load_key]).getElementsByTagName("*");
+
+                browser_data.ward_no.value = get.ward_no;
+                browser_data.type.value = get.type;
+                browser_data.account_no.value = get.account_no;
+                browser_data.con.value = get.con;
+                browser_data.arrears.value = get.arrears;
+                browser_data.property_no.value = get.property_no;
+                browser_data.fir_no.value = get.fir_no;
+
+            });
+        }
+
+        function clean_value(id) {
+            var element = document.getElementById(id);
+            var children = element.children;
+
+            for (var i = 1; i < children.length - 1; i++) {
+                children[i].firstChild.value = "";
+
+                localStorage.setItem(id, JSON.stringify(
+                    {
+                        ward_no: "",
+                        type: "",
+                        account_no: "",
+                        con: "",
+                        arrears: "",
+                        property_no: "",
+                        fir_no: "",
+
+                    }));
+            }
+
+        }
+
+        function isNumeric(str) { return /^\d+$/.test(str); }
+
+        function counts_values() {
+            var count = 0;
+            var no_count = 0;
+
+            var id = "d_0";
+            var next_id = document.getElementById(id).nextSibling;
+
+
+            while (next_id) {
+
+                if (next_id.id === undefined) { break; }
+
+                value = next_id.childNodes[5].firstChild.value;
+
+
+                if (isNumeric(value)) {
+                    count += parseInt(value)
+                    no_count += 1;
+                }
+
+
+                next_id = next_id.nextSibling;
+            }
+            return [no_count, count];
+        }
+
+
+        function trackInput() {
+            document.getElementById("total_no_diss").innerHTML = counts_values()[0];
+            document.getElementById("total_arrears_diss").innerHTML = counts_values()[1];
+
+            sessionStorage.setItem("total_no_diss", document.getElementById("total_no_diss").innerHTML)
+            sessionStorage.setItem("total_arrears_diss", document.getElementById("total_arrears_diss").innerHTML)
+
+        }
+
+        function input_color(id, classes) {
+
+            var cls = document.getElementById(id).cells;
+            var len = cls.length;
+            for (i = 1; i < len - 1; i++) {
+                cls[i].children[0].className = classes;
+            }
+
+        }
+
+        function get_account_no(tr) {
+            var id = tr.closest("tr").attr("id");
+            input_color(id, "form-control bg-dark text-dark border-dark");
+
+            var account_no = document.getElementById(id).querySelector("#account_no").value;
+
+            if (account_no === "") {
+                showAlert("Enter the account Number");
+                //clean_value(id);
+                input_color(id, "form-control bg-white text-center text-dark");
+
+                setTimeout(function () {
+                    hideAlert();
+                }, 2000);
+            }
+
+            else if (isNumeric(account_no) == false) {
+                showAlert("Only Digits are allowd");
+                //clean_value(id);
+
+                input_color(id, "form-control bg-white text-center text-dark");
+                setTimeout(function () {
+                    hideAlert();
+                }, 2000);
+            }
+
+
+
+            else if (isNumeric(account_no)) {
+
+                var asp = sessionStorage.getItem('ASP.NET_SessionId');
+
+                if (asp == undefined) {
+
+                    request_data = { account_no: account_no, "ASP.NET_SessionId": false }
+                }
+
+                else {
+                    request_data = { account_no: account_no, "ASP.NET_SessionId": asp }
+
+                }
+
+
+                fetch('/process_data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(request_data)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+
+
+                        // return 
+                        if (data.session) {
+                            sessionStorage.setItem("ASP.NET_SessionId", data.session["ASP.NET_SessionId"]);
+                        }
+
+                        if (data.status.code === "success") {
+
+                            received = data[account_no]
+                            ward_no = received.ward_no;
+                            type = "defaulter";
+                            con = received.con;
+                            arrears = received.bill_ammount;
+                            property_no = received.property_no;
+                            fir = "None"
+
+
+                            document.getElementById(id).querySelector("#ward_no").value = ward_no;
+                            document.getElementById(id).querySelector("#type").value = type;
+                            document.getElementById(id).querySelector("#con").value = con;
+
+                            document.getElementById(id).querySelector("#arrears").value = arrears;
+
+                            document.getElementById(id).querySelector("#property_no").value = property_no;
+
+                            document.getElementById(id).querySelector("#fir_no").value = fir;
+
+                            localStorage.setItem(id, JSON.stringify(
+                                {
+                                    ward_no: ward_no,
+                                    type: type,
+                                    account_no: account_no,
+                                    con: con,
+                                    arrears: arrears,
+                                    property_no: property_no,
+                                    fir_no: fir,
+
+                                }));
+
+                            input_color(id, "form-control bg-white text-center text-dark");
+
+                            showAlert("Data Generated Sucessfully");
+                            setTimeout(function () {
+                                hideAlert();
+                            }, 3000);
+
+                        }
+                        else if (data.status.code === "error") {
+                            input_color(id, "form-control bg-white text-center text-dark");
+
+                            showAlert("Data Not Found Enter the Record Manually");
+                            setTimeout(function () {
+                                hideAlert();
+                            }, 3000);
+                        }
+
+
+
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+
+
+            }
+
+        }
+    </script>
+    {% endblock %}
+
+
+    </html>
